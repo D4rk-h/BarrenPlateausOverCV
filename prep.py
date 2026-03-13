@@ -6,7 +6,6 @@ def build_U(N):
     Build U as a random unitary matrix of size N x N, 
     sampled from the Haar measure.
     """
-    print(unitary_group.rvs(N))
     return unitary_group.rvs(N)
 
 def build_O(N):
@@ -61,10 +60,29 @@ def build_cov(O, Z):
     """
     Initial state is Vacuum.
     Covariance matrix of the state, is defined as:
-        V = O Z^2 O^T
+        V = O Z O^T
     where O is the passive transformation and Z is the squeezing matrix.
     """
-    return O @ Z**2 @ O.T
+    return O @ Z @ O.T
 
 def build_displacement(N):
-    pass
+    """
+    Since in Stornati they explicitly say that the 
+    mean value of the quadratures is zero.
+    """
+    return np.zeros(2*N)
+
+def sample_xi(xi_mean, V):
+    """
+    Sample xi from a normal distribution with mean 0 and variance 1.
+    """
+    n_samples = 50_000
+    grad1 = np.random.multivariate_normal(xi_mean, V, n_samples)
+
+    # Uncomment to test mean and std of the generated samples
+    #grad2 = np.random.multivariate_normal(xi_mean, V, n_samples)
+    #print("mean 1:", np.mean(grad1, axis=0))
+    #print("std 1: ", np.std(grad1, axis=0))
+    #print("mean 2:", np.mean(grad2, axis=0))
+    #print("std 2: ", np.std(grad2, axis=0))
+    return grad1
