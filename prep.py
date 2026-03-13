@@ -1,26 +1,29 @@
 import numpy as np
+from scipy.stats import unitary_group
 
-def build_interferometer(theta: np.ndarray, N: int):
-    O = np.ndarray((2*N, 2*N))
-    for i in range(N):
-        c = np.cos(theta[i])
-        s = np.sin(theta[i])
-        O_i = np.array([[c, -s], [s, c]])
-        O[2*i:2*i+2, 2*i:2*i+2] = O_i
-    return O
-
-def build_V(theta: np.ndarray, r: np.ndarray):
+def build_U(N):
     """
-    O: Interferometer matrix 2N x 2N
-    theta: List of N-1 beam splitter angles
-    r: List of N squeezing parameters
+    Build U as a random unitary matrix of size N x N, 
+    sampled from the Haar measure.
     """
-    N = len(r)
-    R = np.diag([*r, *[1/ri for ri in r]])
-    O = build_interferometer(theta, N)
-    return O @ R @ O.T
+    return unitary_group.rvs(N)
 
+def build_O(N):
+    """
+    O is defined using the Stornati et al definition:
 
-def sample_Wigner_gaussian(xi, V):
-    V_inv = np.linalg.inv(V)
-    xi = np.ndarray(xi)
+        O ∈ Sp2N,R ∩ SO(2N) ≅ U(N) 
+    
+    which represents a passive transformation that commutes with the 
+    operator n = a†a.
+
+    Is a 2N x 2 symplectic orthogonal matrix that acts as a passive optical linear network.
+    So:
+
+        O = [[Re(U), -Im(U)],
+             [Im(U), Re(U)]]
+
+    where U is the N x N unitary matrix that represents the transformation.
+    """
+    U = build_U(N)
+    return np.block([[np.real(U), -np.imag(U)], [np.imag(U), np.real(U)]])
