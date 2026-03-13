@@ -63,7 +63,7 @@ def build_cov(O, Z, N):
         V = O Z^2 O^T
     where O is the passive transformation and Z is the squeezing matrix.
     """
-    return O @ Z**2 @ O.T
+    return O @ Z @ Z.T @ O.T
 
 def build_displacement(N):
     """
@@ -86,6 +86,3 @@ def sample_xi(xi_mean, V, n_samples=50_000):
     #print("std 2: ", np.std(grad2, axis=0))
     return grad1
 
-
-if __name__ == "__main__":
-    print(np.eye(4))
