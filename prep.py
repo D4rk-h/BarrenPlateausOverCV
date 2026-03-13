@@ -56,14 +56,14 @@ def build_Z(r, N):
     #r = 10 ** (-r_db / 20)
     return np.diag([*r, *[1/ri for ri in r]])
 
-def build_cov(O, Z):
+def build_cov(O, Z, N):
     """
     Initial state is Vacuum.
     Covariance matrix of the state, is defined as:
-        V = O Z O^T
+        V = O Z^2 O^T
     where O is the passive transformation and Z is the squeezing matrix.
     """
-    return O @ Z @ O.T
+    return O @ Z**2 @ O.T
 
 def build_displacement(N):
     """
@@ -72,12 +72,11 @@ def build_displacement(N):
     """
     return np.zeros(2*N)
 
-def sample_xi(xi_mean, V):
+def sample_xi(xi_mean, V, n_samples=50_000):
     """
     Sample xi from a normal distribution with mean 0 and variance 1.
     """
-    n_samples = 50_000
-    grad1 = np.random.multivariate_normal(xi_mean, V, n_samples)
+    grad1 = np.random.multivariate_normal(xi_mean, V/2, n_samples)
 
     # Uncomment to test mean and std of the generated samples
     #grad2 = np.random.multivariate_normal(xi_mean, V, n_samples)
@@ -86,3 +85,7 @@ def sample_xi(xi_mean, V):
     #print("mean 2:", np.mean(grad2, axis=0))
     #print("std 2: ", np.std(grad2, axis=0))
     return grad1
+
+
+if __name__ == "__main__":
+    print(np.eye(4))
