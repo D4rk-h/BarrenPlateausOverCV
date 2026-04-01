@@ -56,7 +56,7 @@ def build_Z(r, N):
     #r = 10 ** (-r_db / 20)
     return np.diag([*r, *[1/ri for ri in r]])
 
-def build_cov(O, Z, N):
+def build_cov(O, Z):
     """
     Initial state is Vacuum.
     Covariance matrix of the state, is defined as:
